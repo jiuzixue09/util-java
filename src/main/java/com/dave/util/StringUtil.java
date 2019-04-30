@@ -9,10 +9,11 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StringUtil {
 
@@ -27,6 +28,8 @@ public class StringUtil {
     private static Properties wb86;
 
     private static Properties shuangPin;
+
+    private static Properties yueYuPin;
 
     private static Properties wordStructure;
 
@@ -72,6 +75,8 @@ public class StringUtil {
         wb86 = readProperties("wb86.properties");
         // 双拼
         shuangPin = readProperties("sp.properties");
+
+        yueYuPin = readProperties("yueyu.properties");
 
         wordStructure = readProperties("word_structure_dict_20000.properties");
 
@@ -254,6 +259,57 @@ public class StringUtil {
         return Integer.parseInt(strokeCount);
     }
 
+    public static String[] charToYueyuPin(char c){
+        if (c < 0x4E00 || c > 0x9FA5) {// GBK字库在unicode中的起始和结束位置
+            return null;
+        }
+
+        String result = yueYuPin.getProperty(Integer.toHexString(c).toUpperCase());
+        if (result == null) {
+            return null;
+        }
+        if (result.contains(",")) {
+            return result.split(",");
+        } else {
+            return new String[] { result };
+        }
+
+    }
+
+    public static String[] stringToYueyuPin(String s){
+        LinkedList<Character> list = new LinkedList<>();
+        for (char c : s.toCharArray()) {
+            list.add(c);
+        }
+
+        return combination(list);
+    }
+
+    private static String[] combination(LinkedList<Character> list){
+        Character c = list.pollFirst();
+        String[] rs = charToYueyuPin(c);
+        Set<String> collect = Stream.of(rs).map(it -> it.substring(0, it.length() - 1)).collect(Collectors.toSet());
+        rs = collect.toArray(new String[collect.size()]);
+
+
+        if(list.isEmpty()) {
+            return rs;
+        }else{
+            String[] combination = combination(list);
+
+            List<String> tmp = new ArrayList<>();
+            for (String r : rs) {
+                for (String s : combination) {
+                    tmp.add(r + " " + s);
+                }
+            }
+            return tmp.toArray(new String[tmp.size()]);
+        }
+
+    }
+
+
+
     /**
      * 字符转化为五笔(86),无法转化返回null
      *
@@ -355,6 +411,8 @@ public class StringUtil {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
+        String[] rs = stringToYueyuPin("西游记仙履奇缘");
+        System.out.println(Arrays.deepToString(rs));
         System.out.println(pinyinToSyllable(charToPinyin('儿')[0]));
         System.out.println(charToStrokeCount('我'));
         System.out.println(charToStruct('我'));
