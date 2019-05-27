@@ -413,6 +413,12 @@ public class StringUtil {
     public static void main(String[] args) throws UnsupportedEncodingException {
         String[] rs = stringToYueyuPin("西游记仙履奇缘");
         System.out.println(Arrays.deepToString(rs));
+        rs = stringToYueyuPin("戏王之王");
+        System.out.println(Arrays.deepToString(rs));
+        rs = stringToYueyuPin("铁三角");
+        System.out.println(Arrays.deepToString(rs));
+        rs = stringToYueyuPin("开心魔法");
+        System.out.println(Arrays.deepToString(rs));
         System.out.println(pinyinToSyllable(charToPinyin('儿')[0]));
         System.out.println(charToStrokeCount('我'));
         System.out.println(charToStruct('我'));
