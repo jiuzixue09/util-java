@@ -140,4 +140,19 @@ public class MathUtil {
         return even;
     }
 
+    /**
+     * @author
+     * @param v
+     * @param Min
+     * @param Max
+     * @param newMin
+     * @param newMax
+     * @return
+     */
+    public static double normalization(double v, double Min, double Max,
+                                       double newMin, double newMax) {
+        return (v - Min) / (Max - Min) * (newMax - newMin) + newMin;
+    }
+
+
 }

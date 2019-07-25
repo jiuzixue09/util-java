@@ -39,7 +39,6 @@ public class ConfigUtil
 			if (strm != null) try { strm.close(); } catch (Throwable e) { e.printStackTrace(); }
 		}
 	}
-	
 	//get para
 	public static String getPara(String key)
 	{  		  

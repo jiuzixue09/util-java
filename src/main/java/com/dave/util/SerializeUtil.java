@@ -3,6 +3,7 @@ package com.dave.util;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SerializeUtil {
 	public static void serialize(String fileName, Object object) throws IOException {
@@ -13,12 +14,9 @@ public class SerializeUtil {
 	}
 	
 	public static Object deserialize(String fileName) throws IOException, ClassNotFoundException{
-		Object object = null;
 		try(FileInputStream fis = new FileInputStream(fileName); ObjectInputStream ois = new ObjectInputStream(fis)){
-			object = ois.readObject();
-			ois.close();
+			return ois.readObject();
 		}
-		return object;
 	}
 	
 	 /**  
@@ -27,12 +25,12 @@ public class SerializeUtil {
      * @return  
 	 * @throws IOException 
      */  
-    public static byte[] toByteArray (Object obj) throws IOException {      
-        byte[] bytes = null;      
+    public static byte[] toByteArray(Object obj) throws IOException {
+        byte[] bytes;
         try(ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(obj);        
             oos.flush();         
-            bytes = bos.toByteArray ();              
+            bytes = bos.toByteArray();
         }    
         return bytes;    
     }   
@@ -44,42 +42,35 @@ public class SerializeUtil {
      * @throws IOException 
      * @throws ClassNotFoundException 
      */  
-    public static Object toObject (byte[] bytes) throws ClassNotFoundException, IOException {      
-        Object obj = null;      
-        try(ByteArrayInputStream bis = new ByteArrayInputStream (bytes);ObjectInputStream ois = new ObjectInputStream (bis)) {        
-            obj = ois.readObject();      
-        }     
-        return obj;    
-    }   
+    public static Object toObject(byte[] bytes) throws ClassNotFoundException, IOException {
+        try(ByteArrayInputStream bis = new ByteArrayInputStream(bytes);ObjectInputStream ois = new ObjectInputStream(bis)) {
+            return ois.readObject();
+        }
+    }
     
     
 
-          
-    @SuppressWarnings("unchecked")
+
     public static <M> List<M> toListObject(byte[] in) throws IOException, ClassNotFoundException {  
-        List<M> list = new ArrayList<>(); 
-        
-        try(ByteArrayInputStream bis = new ByteArrayInputStream (in);ObjectInputStream ois = new ObjectInputStream (bis)) {  
-            if (in != null) {  
-                while (bis.available() > 0) {  
-					M m = (M)ois.readObject();  
-                    if (m == null) break;  
-                    list.add(m);  
-                      
-                }  
-            }  
+        List<M> list = new ArrayList<>();
+
+        Objects.requireNonNull(in,"Input value can't be null!!!");
+        try(ByteArrayInputStream bis = new ByteArrayInputStream(in);ObjectInputStream ois = new ObjectInputStream(bis)) {
+            while (bis.available() > 0) {
+                M m = (M)ois.readObject();
+                if (m == null) break;
+                list.add(m);
+            }
         }
-          
-        return  list;  
+        return  list;
     }  
 
-    @SuppressWarnings("unchecked")  
-    public static <M> byte[] toByteArrayList(Object value) throws IOException {  
-        if (value == null)  
-            throw new NullPointerException("Can't serialize null");  
+
+    public static <M> byte[] toByteArrayList(Object value) throws IOException {
+        Objects.requireNonNull(value,"Input value can't be null!!!");
           
         List<M> values = (List<M>) value;  
-        byte[] results = null;  
+        byte[] results;
           
         try(ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(bos)) {  
             for (M m : values) {  
