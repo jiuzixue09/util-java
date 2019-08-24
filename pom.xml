@@ -53,24 +53,6 @@
     </properties>
 
     <build>
-        <finalName>fbitext-slave-${version}</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/conf/profile</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
